@@ -9,7 +9,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import PIL.Image as img
 from functools import lru_cache
-from name_equivalences import names
 import sys
 
 DEAD = 0
@@ -18,10 +17,19 @@ ALIVE = 1
 # Start
 current_generation = 0
 # Opens and converts to black (False) and white (True)
-filename = input("File? ")
-if filename in names.keys():
-    filename = names[filename]
-board = np.asarray(img.open(filename + ".png").convert("1"))
+names = np.genfromtxt("names.txt", dtype = "str")
+
+ask_file = True
+while ask_file:
+    filename = input("File? ")
+    if filename in names[:, 0]:
+        filename = names[np.where(names == filename)[0], 1][0]
+    try:
+        board = np.asarray(img.open(filename + ".png").convert("1"))
+        ask_file = False
+    except IOError:
+        input("File not found.")
+
 game_grid = np.zeros(board.shape)
 game_grid[np.where(board == False)] = DEAD
 game_grid[np.where(board == True)] = ALIVE
@@ -97,5 +105,5 @@ while True:
         current_generation += 1
         draw_grid(game_grid, current_generation)
     except KeyboardInterrupt:
-        plt.imsave(names[""] + ".png", draw_grid(game_grid, current_generation))
+        plt.imsave("life_board.png", draw_grid(game_grid, current_generation))
         sys.exit()
