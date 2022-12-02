@@ -19,14 +19,13 @@ current_generation = 0
 # Opens and converts to black (False) and white (True)
 names = np.genfromtxt("names.txt", dtype = "str")
 
-ask_file = True
-while ask_file:
+while True:
     filename = input("File? ")
     if filename in names[:, 0]:
         filename = names[np.where(names == filename)[0], 1][0]
     try:
         board = np.asarray(img.open(filename + ".png").convert("1"))
-        ask_file = False
+        break
     except IOError:
         input("File not found.")
 
